@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="index.css">
+
+    
+</head>
+<body>
+    <div class="container">
+        <div class="chat">
+            <h1>Chat</h1>
+
+        </div>
+
+    <div class="comandos">
+        <form action="">
+            <textarea class="input" name="input" id="input" cols="50" rows="2"></textarea>
+            <button id="botao" type="submit">Enviar</button>
+        </form>
+        
+
+    </div>
+    
+    </div>
+
+
+    
+</body>
+<script type="module">
+    import { io } from "https://cdn.socket.io/4.4.1/socket.io.esm.min.js";
+
+    class Mensagem{
+        constructor(pessoa_nome, id_pessoa, id_mensagem, texto){
+            pessoa_nome = pessoa_nome
+            id_pessoa = id_pessoa
+            id_mensagem = id_mensagem
+            texto = texto
+        }
+
+        static fromJson(json){
+            return new Mensagem(
+                json["pessoa_nome"],
+                json["id_pessoa"],
+                json["id_mensagem"],
+                json["texto"]
+            )
+        }
+        
+    }
+
+    var conversa = [];
+
+    window.onload = function(){
+            const nome = window.prompt("Insira seu nome:");
+            const id = window.prompt("Insira seu id:");
+            const socket = io("http://127.0.0.1:5000");
+
+          
+            document.querySelector("form").addEventListener("submit", function(event){
+                event.preventDefault();
+                const mensagem = {
+                        pessoa_nome: nome, 
+                        id_pessoa: id,
+                        id_mensagem: "",
+                        texto: event.target[0].value
+                    }
+                console.log("clicou");
+                console.log(mensagem);
+                conversa.push(mensagem);
+                console.log(conversa);
+                socket.emit('message',{
+                    mensagem:mensagem,
+                    pessoa: id
+                    
+                })
+            })
+
+            socket.on("getMessage", (msg) =>{
+                console.log("Recebido");
+                console.log(msg);
+                conversa.push(msg);
+            console.log(conversa);
+
+              
+            })
+
+            conversa.array.forEach(element => {
+                const span =document.createElement("span");
+                const chat = document.querySelector(".chat")
+                span.innerHTML = `<strong>${element.pessoa_nome}: ${element.texto}`
+                chat.append(span)
+            });
+
+
+        }
+
+  
+  </script>
+
+</html>
