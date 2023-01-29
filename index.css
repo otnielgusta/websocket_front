@@ -2,9 +2,11 @@
 body, html{
     margin: 0;
     padding: 0;
+    color: #fff;
 }
 
 .container {
+    background-color: #131215;
     display: flex;
     width: 100vw;
     height: 100vh;
@@ -25,20 +27,44 @@ body, html{
 button{
     background-color: rebeccapurple;
     color: white;
+    border-radius: 10px;
+    border: none;
     width: 100px;
+    font-size: 16px;
+    font-weight: bold;
     height: 50px;    
 }
+
 
 .chat{
     width: 100vw;
     display: flex;
+    flex-direction: column;
     margin-bottom: 20px;
     justify-content: center;
     align-items: center;
     
 }
 
+.conversa{
+    width: 50%;
+    background-color: blue;
+    height: auto;
+}
+
 h1{
     font-size: 1.5em;
     font-weight: bold;
+}
+
+form{
+    width: 100%;
+    margin-bottom: 20px;
+    justify-content: center;
+    display: flex;
+    gap: 10px;
+}
+.input{
+    width: 50%;
+    border-radius: 10px;
 }

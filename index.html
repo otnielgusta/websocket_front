@@ -13,12 +13,15 @@
     <div class="container">
         <div class="chat">
             <h1>Chat</h1>
+            <div class="conversa">
+
+            </div>
 
         </div>
 
     <div class="comandos">
-        <form action="">
-            <textarea class="input" name="input" id="input" cols="50" rows="2"></textarea>
+        <form>
+            <input class="input" name="input" id="input" cols="50" rows="2">
             <button id="botao" type="submit">Enviar</button>
         </form>
         
@@ -54,39 +57,73 @@
 
     var conversa = [];
 
-    window.onload = function(){
-            const nome = window.prompt("Insira seu nome:");
-            const id = window.prompt("Insira seu id:");
+    window.addEventListener("load", (event) => {
+        if (!localStorage.getItem("nome")) {
+                const nome = window.prompt("Insira seu nome:");
+                const id = window.prompt("Insira seu id:");
+                localStorage.setItem("nome", nome);
+                localStorage.setItem("id", id);
+            
+            }
+               
             const socket = io("http://127.0.0.1:5000");
 
+            
           
             document.querySelector("form").addEventListener("submit", function(event){
                 event.preventDefault();
                 const mensagem = {
-                        pessoa_nome: nome, 
-                        id_pessoa: id,
+                        pessoa_nome: localStorage.getItem("nome"), 
+                        id_pessoa: localStorage.getItem("id"),
                         id_mensagem: "",
                         texto: event.target[0].value
                     }
-                console.log("clicou");
-                console.log(mensagem);
-                conversa.push(mensagem);
-                console.log(conversa);
                 socket.emit('message',{
                     mensagem:mensagem,
-                    pessoa: id
+                    pessoa: localStorage.getItem("id")
                     
                 })
             })
 
+            socket.emit("todaConversa", ()=>{
+               
+            })
+
+            socket.on("pegaConversa", (dados)=>{
+                console.log("Recebido toda conversa");
+                conversa = dados
+                console.log(conversa)
+            })
+
             socket.on("getMessage", (msg) =>{
                 console.log("Recebido");
-                console.log(msg);
                 conversa.push(msg);
-            console.log(conversa);
+                console.log(conversa);
 
               
             })
+            console.log("conversa: "+ conversa)
+            if (conversa.length > 0) {
+                conversa.array.forEach(element => {
+                    const span =document.createElement("span");
+                    const chat = document.querySelector(".conversa")
+                    span.innerHTML = `<strong>${element.pessoa_nome}:</strong> ${element.texto}`
+                    chat.append(span)
+                }); 
+            }
+            else{
+                const span =document.createElement("span");
+                const chat = document.querySelector(".chat")
+                span.innerHTML = `Não há mensagens`
+                chat.append(span)
+            }
+            
+    })
+/*
+    window.onload = function(){
+
+            
+            /*
 
             conversa.array.forEach(element => {
                 const span =document.createElement("span");
@@ -95,8 +132,8 @@
                 chat.append(span)
             });
 
-
         }
+*/
 
   
   </script>
